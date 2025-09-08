@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 const PopUp = ({ setOpenModel, donate, donateFunction, getDonations }) => {
   const [amount, setAmount] = useState('');
   const [allDonationData, setAllDonationData] = useState([]);
+  const [equityInfo, setEquityInfo] = useState(null);
 
   const createDonation = async () => {
     try {
@@ -19,8 +20,21 @@ const PopUp = ({ setOpenModel, donate, donateFunction, getDonations }) => {
     (async () => {
       const donationData = await getDonations(donate.pId);
       setAllDonationData(donationData);
+      
+      // Get equity information if available
+      if (donate.isEquityBased) {
+        // Calculate potential equity share
+        const potentialEquity = donate.target > 0 ? 
+          (parseFloat(amount || 0) * donate.totalEquityOffered) / parseFloat(donate.target) : 0;
+        setEquityInfo({
+          totalOffered: donate.totalEquityOffered,
+          distributed: donate.equityDistributed || 0,
+          remaining: (donate.totalEquityOffered || 0) - (donate.equityDistributed || 0),
+          potentialShare: potentialEquity
+        });
+      }
     })();
-  }, []);
+  }, [amount]);
 
   return (
     <>
@@ -45,12 +59,28 @@ const PopUp = ({ setOpenModel, donate, donateFunction, getDonations }) => {
           <div className="px-6 py-4 space-y-4">
             <p className="text-gray-600">{donate.description}</p>
 
+            {donate.isEquityBased && (
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h4 className="font-semibold text-blue-800 mb-2">🏢 Equity Investment</h4>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <p>Total Equity Offered: {donate.totalEquityOffered}%</p>
+                  <p>Already Distributed: {donate.equityDistributed || 0}%</p>
+                  <p>Remaining: {equityInfo?.remaining || 0}%</p>
+                  {amount && (
+                    <p className="font-semibold text-blue-800">
+                      Your Potential Share: {equityInfo?.potentialShare?.toFixed(4) || 0}%
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
             <input
               onChange={(e) => setAmount(e.target.value)}
               value={amount}
               type="number"
               step="0.01"
-              placeholder="Enter amount in ETH"
+              placeholder={donate.isEquityBased ? "Investment amount in ETH" : "Donation amount in ETH"}
               className="w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-green-500 outline-none"
               required
             />
@@ -84,7 +114,7 @@ const PopUp = ({ setOpenModel, donate, donateFunction, getDonations }) => {
               onClick={createDonation}
               className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded hover:bg-green-700"
             >
-              Donate
+              {donate.isEquityBased ? 'Invest' : 'Donate'}
             </button>
           </div>
         </div>

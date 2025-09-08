@@ -19,7 +19,7 @@ export const CrowdFundingProvider = ({ children }) => {
 
   // Create Campaign
   const createCampaign = async (campaign) => {
-    const { title, description, amount, deadline } = campaign;
+    const { title, description, amount, deadline, isEquityBased, equityOffered } = campaign;
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.BrowserProvider(connection);
@@ -32,7 +32,9 @@ export const CrowdFundingProvider = ({ children }) => {
         title,
         description,
         ethers.parseUnits(amount, 18),
-        new Date(deadline).getTime()
+        new Date(deadline).getTime(),
+        isEquityBased || false,
+        parseInt(equityOffered || 0)
       );
       await transaction.wait();
       console.log('Contract call success', transaction);
@@ -54,6 +56,9 @@ export const CrowdFundingProvider = ({ children }) => {
       target: ethers.formatEther(campaign.target),
       deadline: Number(campaign.deadline),
       amountCollected: ethers.formatEther(campaign.amountCollected),
+      isEquityBased: campaign.isEquityBased,
+      totalEquityOffered: Number(campaign.totalEquityOffered),
+      equityDistributed: Number(campaign.equityDistributed),
       pId: i,
     }));
 
@@ -79,6 +84,9 @@ export const CrowdFundingProvider = ({ children }) => {
       target: ethers.formatEther(campaign.target),
       deadline: Number(campaign.deadline),
       amountCollected: ethers.formatEther(campaign.amountCollected),
+      isEquityBased: campaign.isEquityBased,
+      totalEquityOffered: Number(campaign.totalEquityOffered),
+      equityDistributed: Number(campaign.equityDistributed),
       pId: i,
     }));
 
@@ -118,6 +126,32 @@ export const CrowdFundingProvider = ({ children }) => {
     }
 
     return parsedDonations;
+  };
+
+  // Get Equity Holders
+  const getEquityHolders = async (pId) => {
+    const provider = new ethers.JsonRpcProvider();
+    const contract = fetchContract(provider);
+    const equityHolders = await contract.getEquityHolders(pId);
+    
+    return equityHolders.map(holder => ({
+      holder: holder.holder,
+      shares: Number(holder.shares)
+    }));
+  };
+
+  // Get Campaign Equity Info
+  const getCampaignEquityInfo = async (pId) => {
+    const provider = new ethers.JsonRpcProvider();
+    const contract = fetchContract(provider);
+    const equityInfo = await contract.getCampaignEquityInfo(pId);
+    
+    return {
+      isEquityBased: equityInfo.isEquityBased,
+      totalEquityOffered: Number(equityInfo.totalEquityOffered),
+      equityDistributed: Number(equityInfo.equityDistributed),
+      remainingEquity: Number(equityInfo.remainingEquity)
+    };
   };
 
   // Check if wallet is connected
@@ -168,6 +202,8 @@ export const CrowdFundingProvider = ({ children }) => {
         getUserCampaigns,
         donate,
         getDonations,
+        getEquityHolders,
+        getCampaignEquityInfo,
       }}
     >
       {children}

@@ -7,6 +7,8 @@ const Hero = ({ titleData, createCampaign }) => {
     description: '',
     amount: '',
     deadline: '',
+    isEquityBased: false,
+    equityOffered: '',
   });
 
   const createNewCampaign = async (e) => {
@@ -125,6 +127,41 @@ const Hero = ({ titleData, createCampaign }) => {
                     />
                   </div>
 
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="equityBased"
+                      className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                      onChange={(e) =>
+                        setCampaign({ ...campaign, isEquityBased: e.target.checked })
+                      }
+                    />
+                    <label htmlFor="equityBased" className="font-medium text-gray-700">
+                      Offer Equity Shares
+                    </label>
+                  </div>
+
+                  {campaign.isEquityBased && (
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700">
+                        Equity Offered (%)
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        required
+                        placeholder="e.g., 20"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                        onChange={(e) =>
+                          setCampaign({ ...campaign, equityOffered: e.target.value })
+                        }
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Percentage of company equity to distribute to investors
+                      </p>
+                    </div>
+                  )}
                   <button
                     type="submit"
                     className="w-full px-4 py-3 text-lg font-bold text-white bg-green-500 rounded-md hover:bg-green-600 transition"
@@ -133,7 +170,7 @@ const Hero = ({ titleData, createCampaign }) => {
                   </button>
                 </form>
                 <p className="mt-3 text-sm text-gray-500 text-center">
-                  Start raising funds in minutes with the power of Ethereum.
+                  Start raising funds or offering equity in minutes with the power of Ethereum.
                 </p>
               </div>
             </div>

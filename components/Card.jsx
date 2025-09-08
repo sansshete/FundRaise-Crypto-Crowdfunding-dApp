@@ -38,12 +38,23 @@ const Card = ({ allcampaign, setOpenModel, setDonate, title }) => {
                 <p className="text-sm text-gray-600">
                   <span className="font-semibold">Days Left:</span> {daysLeft(campaign.deadline)}
                 </p>
+                {campaign.isEquityBased && (
+                  <p className="text-sm text-blue-600 font-semibold">
+                    🏢 Equity: {campaign.totalEquityOffered}% offered
+                  </p>
+                )}
               </div>
 
               <div className="flex justify-between text-sm text-gray-700 font-semibold">
                 <span>Target: {campaign.target} ETH</span>
                 <span>Raised: {campaign.amountCollected} ETH</span>
               </div>
+              
+              {campaign.isEquityBased && (
+                <div className="mt-2 text-xs text-blue-600">
+                  Equity Distributed: {campaign.equityDistributed || 0}%
+                </div>
+              )}
             </div>
           </div>
         ))}

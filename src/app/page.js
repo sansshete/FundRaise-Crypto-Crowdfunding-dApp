@@ -3,7 +3,7 @@
 
 import React, { useEffect, useContext, useState } from "react";
 import { CrowdFundingContext } from "../../context/CrowdFunding";
-import { Hero, Card, Popup } from "../../components";
+import { Hero, Card, Popup, EquityDashboard } from "../../components";
 
 const Page = () => {
   const {
@@ -13,6 +13,8 @@ const Page = () => {
     donate,
     getUserCampaigns,
     getDonations,
+    getEquityHolders,
+    getCampaignEquityInfo,
   } = useContext(CrowdFundingContext);
 
   const [allCampaigns, setAllCampaigns] = useState([]);
@@ -47,6 +49,25 @@ const Page = () => {
         setOpenModel={setOpenModel}
         setDonate={setDonateCampaign}
       />
+
+      {/* Show equity dashboard for equity-based campaigns */}
+      {allCampaigns.some(campaign => campaign.isEquityBased) && (
+        <div className="px-4 py-12 mx-auto max-w-screen-xl lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Equity-Based Campaigns</h2>
+          <div className="grid gap-8 lg:grid-cols-2">
+            {allCampaigns
+              .filter(campaign => campaign.isEquityBased)
+              .map((campaign, index) => (
+                <EquityDashboard
+                  key={index}
+                  campaign={campaign}
+                  getEquityHolders={getEquityHolders}
+                  getCampaignEquityInfo={getCampaignEquityInfo}
+                />
+              ))}
+          </div>
+        </div>
+      )}
 
       {/* Optional: Display only if user created campaigns exist
       <Card
