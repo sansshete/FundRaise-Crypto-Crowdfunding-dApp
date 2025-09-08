@@ -18,7 +18,7 @@
     "web3modal": "^1.9.12"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@tailwindcss/postcss": "^4.1.11",
     "tailwindcss": "^4.1.11"
   }
