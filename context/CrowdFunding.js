@@ -45,7 +45,7 @@ export const CrowdFundingProvider = ({ children }) => {
 
   // Get All Campaigns
   const getCampaigns = async () => {
-    const provider = new ethers.JsonRpcProvider();
+    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
     const contract = fetchContract(provider);
     const campaigns = await contract.getCampaign();
 
@@ -67,7 +67,7 @@ export const CrowdFundingProvider = ({ children }) => {
 
   // Get User's Campaigns
   const getUserCampaigns = async () => {
-    const provider = new ethers.JsonRpcProvider();
+    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
     const contract = fetchContract(provider);
     const allCampaigns = await contract.getCampaign();
     const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -112,7 +112,7 @@ export const CrowdFundingProvider = ({ children }) => {
 
   // Get Donations
   const getDonations = async (pId) => {
-    const provider = new ethers.JsonRpcProvider();
+    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
     const contract = fetchContract(provider);
     const donations = await contract.getDonators(pId);
     const numberOfDonations = donations[0].length;
@@ -130,7 +130,7 @@ export const CrowdFundingProvider = ({ children }) => {
 
   // Get Equity Holders
   const getEquityHolders = async (pId) => {
-    const provider = new ethers.JsonRpcProvider();
+    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
     const contract = fetchContract(provider);
     const equityHolders = await contract.getEquityHolders(pId);
     
@@ -142,7 +142,7 @@ export const CrowdFundingProvider = ({ children }) => {
 
   // Get Campaign Equity Info
   const getCampaignEquityInfo = async (pId) => {
-    const provider = new ethers.JsonRpcProvider();
+    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
     const contract = fetchContract(provider);
     const equityInfo = await contract.getCampaignEquityInfo(pId);
     
